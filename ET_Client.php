@@ -96,9 +96,9 @@ class ET_Client extends SoapClient {
 				}
 				$authResponse = restPost($url, json_encode($jsonRequest));
 				$authObject = json_decode($authResponse->body);
-				
-				if ($authResponse && property_exists($authObject,"accessToken")){		
-					
+
+				if ($authResponse && is_object($authObject) && property_exists($authObject,"accessToken")){
+
 					$dv = new DateInterval('PT'.$authObject->expiresIn.'S');
 					$newexpTime = new DateTime();
 					$this->setAuthToken($this->tenantKey, $authObject->accessToken, $newexpTime->add($dv));
