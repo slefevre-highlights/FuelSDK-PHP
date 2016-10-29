@@ -6,7 +6,8 @@ class ET_Client extends SoapClient {
 	public $packageName, $packageFolders, $parentFolders;
 	private $wsdlLoc, $debugSOAP, $lastHTTPCode, $clientId, 
 			$clientSecret, $appsignature, $endpoint, 
-			$tenantTokens, $tenantKey, $xmlLoc;
+			$tenantTokens, $tenantKey, $xmlLoc,
+			$curl;
 		
 	function __construct($getWSDL = false, $debug = false, $params = null) {	
 		$tenantTokens = array();
@@ -186,11 +187,17 @@ class ET_Client extends SoapClient {
 		curl_setopt($ch, CURLOPT_USERAGENT, "FuelSDK-PHP-v0.9");
 		$output = curl_exec($ch);
 		$this->lastHTTPCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-		curl_close($ch); 
-						
+
+		// save for inspection later
+		$this->curl = $ch;
+
 		return $output;
 	}
-	
+
+	public function getCurl() {
+		return $this->curl;
+	}
+
 	public function getAuthToken($tenantKey = null) {
 		$tenantKey = $tenantKey == null ? $this->tenantKey : $tenantKey;
 		if ($this->tenantTokens[$tenantKey] == null) {
